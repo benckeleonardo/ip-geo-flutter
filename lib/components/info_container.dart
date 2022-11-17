@@ -25,7 +25,21 @@ class InfoContainer extends StatelessWidget {
       child: Column(
         children: [
           Text('Query results for ${_data?.query}'),
-        
+          Card(
+            child: SizedBox(
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Continent', style: styleKey),
+                    Text('${_data?.continent} (${_data?.continentCode})',style: styleValue),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Card(
             child: SizedBox(
               height: 40,

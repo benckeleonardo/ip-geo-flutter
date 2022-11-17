@@ -77,16 +77,68 @@ class InputWithIcon extends StatelessWidget {
         children: [
           Flexible(
             child: TextField(
-              decoration: InputDecoration.collapsed(hintText: 'A Public IP Address'),
               controller: ipAddressController,
+              textAlign: TextAlign.center,
+              decoration:
+                  InputDecoration.collapsed(hintText: 'A Public IP Address'),
+              keyboardType: TextInputType.number,
+              onSubmitted: (text) async {
+                IPGeolocation ipInfo;
+                String ipAddress = text;
+                //Testando se é IP público
+                if (!validatePublicIPAddress(ipAddress)) {
+                  showMessage(context,
+                      'A public network IPV4 address is required to perform the query.');
+                  return;
+                }
+
+                //Se a consulta não puder ser realizada
+                try {
+                  ipInfo = await fetchIPGeolocation(ipAddress);
+                } catch (e) {
+                  showMessage(context, 'Query cannot be performed. Check your internet connection.');
+                  return;
+                }
+
+                //testando se a consulta foi realizada com sucesso
+                if (ipInfo.status == 'fail') {
+                  showMessage(context, 'Query cannot be performed successfully');
+                  return;
+                }
+
+                // Se não houve nada de errado, mostrar as informações
+                refresh(ipInfo);
+              },
             ),
           ),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
-              FocusScopeNode currentFocus = FocusScope.of(context);
+              IPGeolocation ipInfo;
               String ipAddress = ipAddressController.text;
-              IPGeolocation ipInfo = await fetchIPGeolocation(ipAddress);
+              //Testando se é IP público
+              if (!validatePublicIPAddress(ipAddress)) {
+                showMessage(context,
+                    'A public network IPV4 address is required to perform the query.');
+                return;
+              }
+
+              //Se a consulta não puder ser realizada
+              try {
+                ipInfo = await fetchIPGeolocation(ipAddress);
+              } catch (e) {
+                showMessage(context,
+                    'Query cannot be performed. Check your internet connection.');
+                return;
+              }
+
+              //testando se a consulta foi realizada com sucesso
+              if (ipInfo.status == 'fail') {
+                showMessage(context, 'Query cannot be performed successfully');
+                return;
+              }
+
+              // Se não houve nada de errado, mostrar as informações
               refresh(ipInfo);
             },
           ),
@@ -96,8 +148,20 @@ class InputWithIcon extends StatelessWidget {
   }
 }
 
+bool validatePublicIPAddress(String ipAddress) {
+  final regex = RegExp(
+      r"^([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?<!172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31))(?<!127)(?<!^10)(?<!^0)\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?<!192\.168)(?<!172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31))\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+  return regex.hasMatch(ipAddress);
+}
+
+bool validateAnyIPAddress(String ipAddress) {
+  final regex = RegExp(r"^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]\d{1,3}$");
+  return regex.hasMatch(ipAddress);
+}
+
 Future<IPGeolocation> fetchIPGeolocation(String ipAddress) async {
-  String url = 'http://ip-api.com/json/$ipAddress';
+  String url =
+      'http://ip-api.com/json/$ipAddress?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query';
   var response = await http.get(Uri.parse(url));
 
   if (response.statusCode == 200) {
@@ -106,3 +170,25 @@ Future<IPGeolocation> fetchIPGeolocation(String ipAddress) async {
   throw Exception('Failed to load IPGeolocation');
 }
 
+Future<void> showMessage(context, message) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Information'),
+        content: SingleChildScrollView(
+          child: Text('$message'),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}

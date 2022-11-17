@@ -1,6 +1,8 @@
 class IPGeolocation {
   IPGeolocation({
-    required this.status, 
+    required this.status,
+    required this.continent,
+    required this.continentCode,
     required this.country, 
     required this.countryCode, 
     required this.region, 
@@ -17,6 +19,8 @@ class IPGeolocation {
   });
   
   final String status;
+  final String continent;
+  final String continentCode;
   final String country;
   final String countryCode;
   final String region;
@@ -34,6 +38,8 @@ class IPGeolocation {
   factory IPGeolocation.fromJson(Map<String, dynamic> json) {
     return IPGeolocation(
       status: json['status'],
+      continent: json['continent'],
+      continentCode: json['continentCode'],
       country: json['country'],
       countryCode: json['countryCode'],
       region: json['region'],
