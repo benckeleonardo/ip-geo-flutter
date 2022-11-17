@@ -12,11 +12,11 @@ class InfoContainer extends StatelessWidget {
 
     final styleKey = TextStyle(
       color: Colors.blue,
-      fontSize: 20,
+      fontSize: 16,
     );
 
     final styleValue = TextStyle(
-      fontSize: 20,
+      fontSize: 16,
     );
 
     return Container(
@@ -24,102 +24,125 @@ class InfoContainer extends StatelessWidget {
       padding: EdgeInsets.all(8),
       child: Column(
         children: [
+          Text('Query results for ${_data?.query}'),
+        
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' Query:   ', style: styleKey),
-                  Text('${_data?.query}',style: styleValue),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Country', style: styleKey),
+                    Text('${_data?.country} (${_data?.countryCode})',style: styleValue),
+                  ],
+                ),
               ),
             ),
           ), 
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' Country:   ', style: styleKey),
-                  Text('${_data?.country} (${_data?.countryCode})',style: styleValue),
-                ],
-              ),
-            ),
-          ), 
-          Card(
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' Region:   ', style: styleKey),
-                  Text('${_data?.regionName} (${_data?.region})', style: styleValue),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Region', style: styleKey),
+                    Text('${_data?.regionName} (${_data?.region})', style: styleValue),
+                  ],
+                ),
               ),
             ),
           ),
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' City:   ', style: styleKey),
-                  Text('${_data?.city}', style: styleValue),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('City', style: styleKey),
+                    Text('${_data?.city}', style: styleValue),
+                  ],
+                ),
               ),
             ),
           ),
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' Zip code:   ', style: styleKey),
-                  Text('${_data?.zip}', style: styleValue),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Zipcode', style: styleKey),
+                    Text('${_data?.zip}', style: styleValue),
+                  ],
+                ),
               ),
             ),
           ),
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' Timezone:   ', style: styleKey),
-                  Text('${_data?.timezone}', style: styleValue),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Timezone', style: styleKey),
+                    Text('${_data?.timezone}', style: styleValue),
+                  ],
+                ),
               ),
             ),
           ),
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' ISP:   ', style: styleKey),
-                  Text('${_data?.isp}', style: styleValue),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('ISP', style: styleKey),
+                    Text('${_data?.isp}', style: styleValue),
+                  ],
+                ),
               ),
             ),
           ),
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' Organization:   ', style: styleKey),
-                  Flexible(child: Text('${_data?.org}', style: styleValue)),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Organization', style: styleKey),
+                    Flexible(child: Text('${_data?.org}', style: styleValue)),
+                  ],
+                ),
               ),
             ),
           ),
           Card(
             child: SizedBox(
-              height: 50,
-              child: Row(
-                children: [
-                  Text(' AS:   ', style: styleKey),
-                  Flexible(child: Text('${_data?.as}', style: styleValue)),
-                ],
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('AS', style: styleKey),
+                    Flexible(child: Text('${_data?.as}', style: styleValue)),
+                  ],
+                ),
               ),
             ),
           ),
