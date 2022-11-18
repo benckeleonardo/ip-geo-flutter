@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../components/info_container.dart';
-import '../components/map_sample.dart';
+import '../components/info_list_cards.dart';
+import '../components/map_with_marker.dart';
 import '../models/ip_geolocation.dart';
 
 class QueryPage extends StatefulWidget {
@@ -25,10 +25,11 @@ class QueryPageState extends State<QueryPage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      primary: false,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+          Container(
+            margin: EdgeInsets.all(20),
             child: InputWithIcon(_updateIpInfo),
           ),
           Container(
@@ -36,7 +37,7 @@ class QueryPageState extends State<QueryPage> {
             height: 300,
             width: 300,
             child: ClipRRect(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -46,13 +47,17 @@ class QueryPageState extends State<QueryPage> {
                   alignment: Alignment.bottomRight,
                   heightFactor: 0.3,
                   widthFactor: 2.5,
-                  child: MapSample(widget._ipInfo?.lat, widget._ipInfo?.lon)),
+                  child: MapWithMarker(widget._ipInfo?.lat, widget._ipInfo?.lon)),
             ),
           ),
-          Text(
-            '*What you are seeing here is the Approximate Location and it might differ slightly, Thanks.',
+          Container(
+            padding: EdgeInsets.only(top: 2, left: 50, right: 50),
+            child: Text(
+              '*What you are seeing here is the Approximate Location and it might differ slightly, Thanks.',
+              style: TextStyle(fontSize: 12),
+            ),
           ),
-          InfoContainer(widget._ipInfo),
+          InfoListCards(widget._ipInfo),
         ],
       ),
     );
@@ -68,19 +73,20 @@ class InputWithIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
         children: [
           Flexible(
             child: TextField(
               controller: ipAddressController,
-              textAlign: TextAlign.center,
-              decoration:
-                  InputDecoration.collapsed(hintText: 'A Public IP Address'),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Enter a public IP address',
+                contentPadding: EdgeInsets.only(left: 20),
+              ),
               keyboardType: TextInputType.number,
               onSubmitted: (text) async {
                 IPGeolocation ipInfo;
@@ -96,13 +102,15 @@ class InputWithIcon extends StatelessWidget {
                 try {
                   ipInfo = await fetchIPGeolocation(ipAddress);
                 } catch (e) {
-                  showMessage(context, 'Query cannot be performed. Check your internet connection.');
+                  showMessage(context,
+                      'Query cannot be performed. Check your internet connection.');
                   return;
                 }
 
                 //testando se a consulta foi realizada com sucesso
                 if (ipInfo.status == 'fail') {
-                  showMessage(context, 'Query cannot be performed successfully');
+                  showMessage(
+                      context, 'Query cannot be performed successfully');
                   return;
                 }
 

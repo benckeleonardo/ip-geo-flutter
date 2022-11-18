@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:ip_geo_flutter/screens/query_page.dart';
 
-class AppNavBar extends StatefulWidget {
-  const AppNavBar({super.key});
+class BottomNavBar extends StatefulWidget {
+  const BottomNavBar({super.key});
 
   @override
-  State<AppNavBar> createState() => _AppNavBarState();
+  State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _AppNavBarState extends State<AppNavBar> {
+class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 1;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'History',
-      style: optionStyle,
-    ),
+
+  static final List<Widget> _widgetOptions = <Widget>[
+    const Text('History', style: optionStyle),
     QueryPage(),
-    Text(
-      'About',
-      style: optionStyle,
-    ),
+    const Text('About', style: optionStyle),
   ];
 
   void _onItemTapped(int index) {
@@ -58,4 +53,4 @@ class _AppNavBarState extends State<AppNavBar> {
       ),
     );
   }
-} 
+}

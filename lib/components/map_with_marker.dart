@@ -3,18 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class MapSample extends StatefulWidget {
+class MapWithMarker extends StatefulWidget {
   @override
-  State<MapSample> createState() => MapSampleState();
+  State<MapWithMarker> createState() => MapWithMarkerState();
 
-  MapSample(this._lat, this._lon);
+  MapWithMarker(this._lat, this._lon);
 
   double? _lat;
   double? _lon;
 }
 
-class MapSampleState extends State<MapSample> {
+class MapWithMarkerState extends State<MapWithMarker> {
   Completer<GoogleMapController> _controller = Completer();
+
+  final Set<Marker> markers = Set();
+  final Set<Circle> circles = Set();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,8 @@ class MapSampleState extends State<MapSample> {
     }
 
     return GoogleMap(
+      markers: markers,
+      circles: circles,
       mapType: MapType.normal,
       initialCameraPosition: CameraPosition(
         target: LatLng(37.42796133580664, -122.085749655962),
@@ -38,6 +43,26 @@ class MapSampleState extends State<MapSample> {
   }
 
   Future<void> _goToPosition(lat, lon) async {
+    markers.add(Marker(
+      markerId: MarkerId('IP Marker'),
+      position: LatLng(lat, lon),
+      infoWindow: InfoWindow(
+        title: 'My Custom Title ',
+        snippet: 'My Custom Subtitle',
+      ),
+      icon: BitmapDescriptor.defaultMarker,
+    ));
+
+    circles.add(
+      Circle(
+        circleId: CircleId('IP Circle'),
+        center: LatLng(lat, lon),
+        radius: 600,
+        fillColor: Colors.blue.withOpacity(0.3),
+        strokeWidth: 0,
+      )
+    );
+
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
