@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -16,7 +17,14 @@ class QueryPage extends StatefulWidget {
 }
 
 class QueryPageState extends State<QueryPage> {
-  void _updateIpInfo(IPGeolocation ipInfo) {
+
+  void _updateIpInfo(IPGeolocation ipInfo) async {
+    var box = await Hive.openBox('history');
+    await box.add(ipInfo.query);
+    for (var i = 0; i < box.length; i++) {
+      print(box.getAt(i));
+    }
+    await box.close();
     setState(() {
       widget._ipInfo = ipInfo;
     });
@@ -70,6 +78,37 @@ class InputWithIcon extends StatelessWidget {
   Function refresh;
   final TextEditingController ipAddressController = TextEditingController();
 
+
+  void _queryAction(context) async {
+  IPGeolocation ipInfo;
+  String ipAddress = ipAddressController.text;
+  //Testando se é IP público
+  if (!validatePublicIPAddress(ipAddress)) {
+    showMessage(context,
+        'A public network IPV4 address is required to perform the query.');
+    return;
+  }
+
+  //Se a consulta não puder ser realizada
+  try {
+    ipInfo = await fetchIPGeolocation(ipAddress);
+  } catch (e) {
+    showMessage(context,
+        'Query cannot be performed. Check your internet connection.');
+    return;
+  }
+
+  //testando se a consulta foi realizada com sucesso
+  if (ipInfo.status == 'fail') {
+    showMessage(
+        context, 'Query cannot be performed successfully');
+    return;
+  }
+
+  // Se não houve nada de errado, mostrar as informações
+  refresh(ipInfo);
+}
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -88,66 +127,15 @@ class InputWithIcon extends StatelessWidget {
                 contentPadding: EdgeInsets.only(left: 20),
               ),
               keyboardType: TextInputType.number,
-              onSubmitted: (text) async {
-                IPGeolocation ipInfo;
-                String ipAddress = text;
-                //Testando se é IP público
-                if (!validatePublicIPAddress(ipAddress)) {
-                  showMessage(context,
-                      'A public network IPV4 address is required to perform the query.');
-                  return;
-                }
-
-                //Se a consulta não puder ser realizada
-                try {
-                  ipInfo = await fetchIPGeolocation(ipAddress);
-                } catch (e) {
-                  showMessage(context,
-                      'Query cannot be performed. Check your internet connection.');
-                  return;
-                }
-
-                //testando se a consulta foi realizada com sucesso
-                if (ipInfo.status == 'fail') {
-                  showMessage(
-                      context, 'Query cannot be performed successfully');
-                  return;
-                }
-
-                // Se não houve nada de errado, mostrar as informações
-                refresh(ipInfo);
-              },
+              onSubmitted: (text) {
+                _queryAction(context);
+              }
             ),
           ),
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () async {
-              IPGeolocation ipInfo;
-              String ipAddress = ipAddressController.text;
-              //Testando se é IP público
-              if (!validatePublicIPAddress(ipAddress)) {
-                showMessage(context,
-                    'A public network IPV4 address is required to perform the query.');
-                return;
-              }
-
-              //Se a consulta não puder ser realizada
-              try {
-                ipInfo = await fetchIPGeolocation(ipAddress);
-              } catch (e) {
-                showMessage(context,
-                    'Query cannot be performed. Check your internet connection.');
-                return;
-              }
-
-              //testando se a consulta foi realizada com sucesso
-              if (ipInfo.status == 'fail') {
-                showMessage(context, 'Query cannot be performed successfully');
-                return;
-              }
-
-              // Se não houve nada de errado, mostrar as informações
-              refresh(ipInfo);
+            onPressed: () {
+              _queryAction(context);
             },
           ),
         ],
@@ -159,11 +147,6 @@ class InputWithIcon extends StatelessWidget {
 bool validatePublicIPAddress(String ipAddress) {
   final regex = RegExp(
       r"^([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?<!172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31))(?<!127)(?<!^10)(?<!^0)\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(?<!192\.168)(?<!172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31))\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
-  return regex.hasMatch(ipAddress);
-}
-
-bool validateAnyIPAddress(String ipAddress) {
-  final regex = RegExp(r"^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]\d{1,3}$");
   return regex.hasMatch(ipAddress);
 }
 

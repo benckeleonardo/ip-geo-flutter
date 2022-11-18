@@ -34,7 +34,7 @@ class MapWithMarkerState extends State<MapWithMarker> {
       mapType: MapType.normal,
       initialCameraPosition: CameraPosition(
         target: LatLng(37.42796133580664, -122.085749655962),
-        zoom: 11,
+        zoom: 10,
       ),
       onMapCreated: (GoogleMapController controller) {
         _controller.complete(controller);
@@ -47,8 +47,8 @@ class MapWithMarkerState extends State<MapWithMarker> {
       markerId: MarkerId('IP Marker'),
       position: LatLng(lat, lon),
       infoWindow: InfoWindow(
-        title: 'My Custom Title ',
-        snippet: 'My Custom Subtitle',
+        title: 'IP Location',
+        snippet: '',
       ),
       icon: BitmapDescriptor.defaultMarker,
     ));

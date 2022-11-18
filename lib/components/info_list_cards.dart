@@ -8,13 +8,14 @@ class InfoListCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (_data == null)
+    if (_data == null) {
       return Container(
         height: 200,
         child: Center(
           child: Text('Make a query to fetch geolocation information'),
         ),
       );
+    }
 
     final styleKey = TextStyle(color: Colors.blue, fontSize: 16);
     final styleValue = TextStyle(fontSize: 16);
